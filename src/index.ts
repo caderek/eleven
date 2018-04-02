@@ -1,7 +1,8 @@
-import httpDriver from './drivers/http-driver'
-import * as flow from 'lodash/flow'
+import httpDriver from "./drivers/http-driver/http-driver"
+import socketIODriver from "./drivers/socketio-driver/socketio-driver"
+import _ from "lodash"
 
-const PORT = 1113
+const PORT = 1115
 
 const hello = (req) => {
   return {
@@ -9,27 +10,35 @@ const hello = (req) => {
   }
 }
 
-const users = (req) => {
+const users = () => {
   return {
     body: [
-      { name: 'Maciek', age: 29 },
-      { name: 'Adam', age: 24 },
-      { name: 'Monika', age: 21 },
-    ]
+      { name: "Maciek", age: 29 },
+      { name: "Adam", age: 24 },
+      { name: "Monika", age: 21 },
+    ],
   }
 }
 
 const log = (label) => (input) => {
   console.log(`${label}:`)
   console.dir(input, { colors: true, depth: null })
-  return input;
+  return input
 }
 
-httpDriver({
-  hello: flow(
-    log('before'),
-    hello,
-    log('after')
-  ),
+const socketConnection = (req) => {
+  console.dir(req, { colors: true, depth: null })
+  return {
+    body: {
+      message: `Hello, your ID is: ${req.payload.connectionId}`,
+    },
+  }
+}
+
+const routes = {
+  hello,
   users,
-}, PORT)
+  socketConnection,
+}
+
+_.flow(httpDriver(routes), socketIODriver(routes))(PORT)

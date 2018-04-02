@@ -1,9 +1,9 @@
 const defaultHandler = (req) => {
   return {
-    status: 'NOT OK',
+    status: "NOT OK",
     body: {
       message: `Route '${req.action}' does not exist`,
-    }
+    },
   }
 }
 
@@ -12,7 +12,7 @@ const route = (routes) => (requestSpec) => {
     return {
       body: {
         availableActions: Object.keys(routes),
-      }
+      },
     }
   }
 

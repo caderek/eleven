@@ -1,4 +1,5 @@
 import { chan, spawn, go, take, putAsync } from "js-csp"
+import { runInContext } from "vm"
 
 // DB driver stub
 const query = (sql) => {
@@ -58,6 +59,9 @@ const showResults = loop((input) => {
 })
 
 // Spawn
+// Maybe sinks all available with matching by output field? Like:
+// run(handler, source)
+// source as channel or string? But does it make sense to pass string when we probably would use imported const with string?
 
 go(prepareQuery, [requests, queries])
 spawn(db(queries, dbResponses))

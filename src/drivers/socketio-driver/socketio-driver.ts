@@ -12,7 +12,6 @@ const socketIODriver = (routes) => (server) => {
           connectionId: socket.id,
         },
       })
-
       socket.emit("hello", responseSpec)
     },
   )

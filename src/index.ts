@@ -1,44 +1,12 @@
 import httpDriver from "./drivers/http-driver/http-driver"
-import socketIODriver from "./drivers/socketio-driver/socketio-driver"
-import _ from "lodash"
+import { go } from "js-csp"
+import { db, prepareQuery, showResults } from "./flow-chan"
+import chans from "./chans"
 
-const PORT = 1116
+const PORT = 1117
 
-const hello = (req) => {
-  return {
-    body: `Hello ${req.payload.name}!`,
-  }
-}
+go(prepareQuery, [chans.requests, chans.queries])
+go(db, [chans.queries, chans.dbResponses])
+go(showResults, [chans.dbResponses, chans.httpResponses])
 
-const users = () => {
-  return {
-    body: [
-      { name: "Maciek", age: 29 },
-      { name: "Adam", age: 24 },
-      { name: "Monika", age: 21 },
-    ],
-  }
-}
-
-const log = (label) => (input) => {
-  console.log(`${label}:`)
-  console.dir(input, { colors: true, depth: null })
-  return input
-}
-
-const socketConnection = (req) => {
-  console.dir(req, { colors: true, depth: null })
-  return {
-    body: {
-      message: `Hello, your ID is: ${req.payload.connectionId}`,
-    },
-  }
-}
-
-const routes = {
-  hello,
-  users,
-  socketConnection,
-}
-
-_.flow(httpDriver(routes), socketIODriver(routes))(PORT)
+httpDriver(PORT)

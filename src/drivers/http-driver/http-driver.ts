@@ -1,7 +1,8 @@
 import { createServer } from "http"
 import jsonBody from "body/json"
 import { promisify } from "util"
-import route from "../../router/route"
+import { go, take, putAsync } from "js-csp"
+import chans from "../../chans"
 
 const parseBody = promisify(jsonBody)
 
@@ -15,28 +16,35 @@ type RequestSpec = {
   payload: any
 }
 
-type HttpDriver = (routes: any) => (port: number) => void
+type HttpDriver = (port: number) => void
 
 /** Creates server instance */
-const httpDriver: HttpDriver = (routes) => (port) => {
+const httpDriver: HttpDriver = (port) => {
   const server = createServer((req, res) => {
     parseBody(req)
       .catch(() => ({}))
       .then((requestSpec: RequestSpec) => {
-        const responseSpec: ResponseSpec = route(routes)(requestSpec)
+        // console.dir(requestSpec, { colors: true, depth: null })
+        putAsync(chans.requests, requestSpec)
 
-        if (!responseSpec.status) {
-          responseSpec.status = "OK"
-        }
+        go(function*() {
+          const responseSpec: ResponseSpec = yield take(chans.httpResponses)
+          // console.log("----------------------------------:")
+          // console.log("Express response:")
+          // console.dir(responseSpec, { colors: true, depth: null })
+          if (!responseSpec.status) {
+            responseSpec.status = "OK"
+          }
 
-        if (!responseSpec.body) {
-          responseSpec.body = {}
-        }
+          if (!responseSpec.body) {
+            responseSpec.body = {}
+          }
 
-        res.writeHead(200, {
-          "Content-Type": "application/json",
+          res.writeHead(200, {
+            "Content-Type": "application/json",
+          })
+          res.end(JSON.stringify(responseSpec))
         })
-        res.end(JSON.stringify(responseSpec))
       })
   })
 

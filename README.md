@@ -4,6 +4,7 @@
 
 * locals like username account-domain added automatically (headers? requestSpec?)
 * broadcasting, http-req/http-res, fire and forget, http-req/http-req, queue/queue, combinations, multi sources and sinks,
+* Minimize async code in users code, abstract away asynchronous code via channels
 
 ## Todo
 

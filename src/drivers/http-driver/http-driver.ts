@@ -1,8 +1,7 @@
 import { createServer } from "http"
 import jsonBody from "body/json"
 import { promisify } from "util"
-import { go, take, putAsync } from "js-csp"
-import chans from "../../chans"
+import { go, take, putAsync } from "../../utils/channels"
 
 const parseBody = promisify(jsonBody)
 
@@ -16,22 +15,27 @@ type RequestSpec = {
   payload: any
 }
 
-type HttpDriver = (port: number) => void
+type HttpDriver = (port: number, requestChan: any, responseChan: any) => void
 
 /** Creates server instance */
-const httpDriver: HttpDriver = (port) => {
+const httpDriver: HttpDriver = (port, requestChan, responseChan) => {
   const server = createServer((req, res) => {
     parseBody(req)
       .catch(() => ({}))
       .then((requestSpec: RequestSpec) => {
-        // console.dir(requestSpec, { colors: true, depth: null })
-        putAsync(chans.requests, requestSpec)
+        console.log("-----------------------------------------------")
+        console.log("Express request:")
+        console.dir(requestSpec, { colors: true, depth: null })
+
+        putAsync(requestChan, requestSpec)
 
         go(function*() {
-          const responseSpec: ResponseSpec = yield take(chans.httpResponses)
-          // console.log("----------------------------------:")
-          // console.log("Express response:")
-          // console.dir(responseSpec, { colors: true, depth: null })
+          const responseSpec: ResponseSpec = yield take(responseChan)
+
+          console.log("-----------------------------------------------")
+          console.log("Express response:")
+          console.dir(responseSpec, { colors: true, depth: null })
+
           if (!responseSpec.status) {
             responseSpec.status = "OK"
           }

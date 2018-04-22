@@ -14,7 +14,8 @@
     "strict": true,
     "removeComments": true,
     "preserveConstEnums": true,
-    "sourceMap": true,
-    "moduleResolution": "node"
+    "sourceMap": false,
+    "moduleResolution": "node",
+    "outDir": "dist"
   }
 }

@@ -4,6 +4,7 @@
   "description": "Node.js protocol-agnostic, data-first, functional framework",
   "main": "src/index.js",
   "scripts": {
+    "build": "tsc",
     "format": "prettier --write \"*/**/*.ts\"",
     "lint": "tslint -c tslint.json -p tsconfig.json --format stylish",
     "precommit": "lint-staged",

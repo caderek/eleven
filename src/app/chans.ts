@@ -1,4 +1,4 @@
-import { chan } from "js-csp"
+import { chan } from "../utils/channels"
 
 export default {
   requests: chan(),

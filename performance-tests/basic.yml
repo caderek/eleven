@@ -1,0 +1,16 @@
+config:
+  target: "http://127.0.0.1:1117"
+  phases:
+    - duration: 10
+      arrivalRate: 100
+  payload:
+    path: "data.csv"
+    fields:
+      - "ids"
+scenarios:
+  - name: "Search and buy"
+    flow:
+      - get:
+          url: "/"
+          json: 
+            id: "{{ ids }}"

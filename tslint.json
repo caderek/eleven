@@ -4,7 +4,7 @@
   "jsRules": {},
   "rules": {
     "no-console": {
-      "severity": "warning",
+      "severity": "off",
       "options": ["debug", "info", "log", "time", "timeEnd", "trace"]
     },
     "object-literal-sort-keys": false,

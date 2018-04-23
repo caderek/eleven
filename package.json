@@ -9,6 +9,7 @@
     "lint": "tslint -c tslint.json -p tsconfig.json --format stylish",
     "precommit": "lint-staged",
     "start": "nodemon",
+    "start:prod": "node dist/app/index.js",
     "test": "echo 'No test specified'"
   },
   "keywords": [],

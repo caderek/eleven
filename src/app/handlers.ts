@@ -25,3 +25,7 @@ export const showResults = (input) => {
     body: input.payload,
   }
 }
+
+export const echo = (input) => {
+  return input
+}

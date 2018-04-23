@@ -1,8 +1,10 @@
 import { chan } from "../utils/channels"
 
 export default {
-  requests: chan(),
+  httpRequests: chan(),
+  httpResponses: chan(),
+  socketioRequests: chan(),
+  socketioResponses: chan(),
   queries: chan(),
   dbResponses: chan(),
-  httpResponses: chan(),
 }

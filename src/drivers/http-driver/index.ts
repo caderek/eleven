@@ -15,10 +15,15 @@ type RequestSpec = {
   payload: any
 }
 
-type HttpDriver = (port: number, requestChan: any, responseChan: any) => void
+type HttpDriver = (port: number, inputChan: any, outputChan: any) => void
 
-/** Creates server instance */
-const httpDriver: HttpDriver = (port, requestChan, responseChan) => {
+/**
+ * Creates server instance
+ *
+ * @todo single input channel for http and socket.io?
+ * @todo what about responseSpec - should it contain action name (for routing on client side (ws))
+ */
+const httpDriver: HttpDriver = (port, inputChan, outputChan) => {
   const server = createServer((req, res) => {
     parseBody(req)
       .catch(() => ({}))
@@ -27,10 +32,10 @@ const httpDriver: HttpDriver = (port, requestChan, responseChan) => {
         console.log("Express request:")
         console.dir(requestSpec, { colors: true, depth: null })
 
-        putAsync(requestChan, requestSpec)
+        putAsync(inputChan, requestSpec)
 
         go(function*() {
-          const responseSpec: ResponseSpec = yield take(responseChan)
+          const responseSpec: ResponseSpec = yield take(outputChan)
 
           console.log("-----------------------------------------------")
           console.log("Express response:")

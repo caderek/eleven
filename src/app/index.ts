@@ -1,12 +1,13 @@
-import httpDriver from "../drivers/http-driver/http-driver"
-import { db, prepareQuery, showResults } from "./flow-chan"
+import httpDriver from "../drivers/http-driver"
+import socketioDriver from "../drivers/socketio-driver"
+import { db, prepareQuery, showResults, echo } from "./handlers"
 import chans from "./chans"
 import { run } from "../utils/channels"
 
-const PORT = 1117
+const PORT = Number(process.env.PORT) || 1117
 
 run(prepareQuery, {
-  source: chans.requests,
+  source: chans.httpRequests,
   sink: chans.queries,
 })
 
@@ -20,4 +21,11 @@ run(showResults, {
   sink: chans.httpResponses,
 })
 
-httpDriver(PORT, chans.requests, chans.httpResponses)
+run(echo, {
+  source: chans.socketioRequests,
+  sink: chans.socketioResponses,
+})
+
+const server = httpDriver(PORT, chans.httpRequests, chans.httpResponses)
+
+socketioDriver(server, chans.socketioRequests, chans.socketioResponses)

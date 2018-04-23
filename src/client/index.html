@@ -11,10 +11,10 @@
 <script src="socket.io.js"></script>
 <script>
 
-const client = io('http://localhost:1116')
+const client = io('http://localhost:1117')
 
 client
-  .on('hello', (res) => {
+  .on('input', (res) => {
     console.log(res)
   })
 

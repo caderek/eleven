@@ -2,6 +2,7 @@ import { createServer } from "http"
 import jsonBody from "body/json"
 import { promisify } from "util"
 import { go, take, putAsync } from "../../utils/channels"
+import { log } from "../../utils/dev"
 
 const parseBody = promisify(jsonBody)
 
@@ -28,18 +29,14 @@ const httpDriver: HttpDriver = (port, inputChan, outputChan) => {
     parseBody(req)
       .catch(() => ({}))
       .then((requestSpec: RequestSpec) => {
-        console.log("-----------------------------------------------")
-        console.log("Express request:")
-        console.dir(requestSpec, { colors: true, depth: null })
+        log("Express request:", requestSpec)
 
         putAsync(inputChan, requestSpec)
 
         go(function*() {
           const responseSpec: ResponseSpec = yield take(outputChan)
 
-          console.log("-----------------------------------------------")
-          console.log("Express response:")
-          console.dir(responseSpec, { colors: true, depth: null })
+          log("Express response:", responseSpec)
 
           if (!responseSpec.status) {
             responseSpec.status = "OK"

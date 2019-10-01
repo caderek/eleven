@@ -1,4 +1,6 @@
-# Eleven - Node.js protocol-agnostic framework
+## Notes
+
+* This repo is for experiments, will unlikely become a complete project
 
 ## Ideas
 
